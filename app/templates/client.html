@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+<table>
+    <tr valign="top">
+        <td>
+            <h1>Client: {{ client.name }}</h1>
+            <p>First name:{% if client.firstName %}{{ client.firstName }}{% endif %}</p>
+            <p> Name: {% if client.lastName %}{{ client.lastName }}{% endif %}</p>
+            <p>NIP: {% if client.nip %}{{ client.nip }}{% endif %}</p>
+            <p>Balance: {% if client.balance %}{{ client.balance }}</p>{% endif %}</p>
+            <p>Start Date: {% if client.startDate %}{{ client.startDate }}{% endif %}</p>
+            <p>Email: {% if client.email %}{{ client.email }}{% endif %}</p>
+            <p>Number: {% if client.phoneNumber %}{{ client.phoneNumber }}{% endif %}</p>
+
+        </td>
+    </tr>
+</table>
+{% endblock %}

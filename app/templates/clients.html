@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+<!--
+
+    {% for client in clients %}
+        <a href="{{ url_for('viewClient', id = client.id) }}">{{client.name}}</a>    
+    {% endfor %}
+
+-->
+{% block content %}
+
+
+{% if clients %}
+{% if next_url %}
+<a href="{{ next_url}}"> next page</a>
+{% endif %}
+{% if prev_url %}
+<a href="{{ prev_url}}"> prev page</a>
+{% endif %}
+<table>
+<tr><th>id</th><th>name</th><th>NIP</th><th>balance</th><th>startdate</th><th>phoneNumber</th><th>email</th></tr>
+{% for client in clients %}
+<tr>
+<th>{{client.id}}</th>
+<th><a href="{{ url_for('viewClient', id = client.id) }}">{{client.name }}</a></th>
+<th>{{client.nip}}</th>
+<th>{{client.balance}}</th>
+<th>{{client.startDate}}</th>
+<th>{{client.phoneNumber}}</th>
+<th>{{client.email}}</th>
+</tr>
+{% endfor %}
+</table>
+
+{% else %}
+<p>No clients are available.</p>
+{% endif %}
+
+
+{% endblock %}

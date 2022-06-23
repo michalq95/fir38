@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="/static/style.css">
+        {% if title %}
+        <title>{{ title }} - Fir</title>
+        {% else %}
+        <title>Fir38</title>
+        {% endif %}
+    </head>
+    <body>
+        <div>
+            Microblog:
+            <a href="{{ url_for('index') }}">Home</a>
+            {% if current_user.is_anonymous %}
+            {% else %}
+            <a href="{{ url_for('logout') }}">Logout</a>
+            <a href="{{ url_for('createClient') }}">Create Client</a>
+            <a href="{{ url_for('orders') }}">Orders</a>
+            <a href="{{ url_for('createOrder') }}">Create Order</a>
+            {% endif %}
+        </div>
+        {% block content %}{% endblock %}
+    </body>
+</html>
