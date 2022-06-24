@@ -46,6 +46,8 @@ class Client(db.Model):
     def __str__(self):
         return self.name  # value string
 
+    
+
 class StatusesEnum(enum.Enum):
     s1 = 'Przyjete'
     s2 = 'Outsourcowane'
@@ -82,6 +84,7 @@ class Order(db.Model):
     client_id = db.Column(db.Integer, db.ForeignKey("client.id"))
     client = relationship("Client", back_populates="ordered")
     status = db.Column(Enum(StatusesEnum))
+    locked = db.Column(db.Boolean, default = False)
 
 
 

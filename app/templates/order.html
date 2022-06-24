@@ -11,6 +11,7 @@
             <p>returnDate: {% if order.returnDate %}{{ order.returnDate }}</p>{% endif %}</p>
             
             <form action="" method="POST">
+                {{ form.hidden_tag() }}
                 <p>
                     {{ form.description.label }}<br>
                     {{ form.description }}<br>

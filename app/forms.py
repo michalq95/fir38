@@ -48,7 +48,9 @@ class UpdateOrderForm(FlaskForm):
     comment = TextAreaField("Comment", validators=[Length(max=256)])
     status = SelectField("Status", choices= [(e.name, e.value) for e in StatusesEnum]
         )
-    #status = SelectField(u"Status", coerce=str)
     submit = SubmitField('Update Client')
+
+class EmptyForm(FlaskForm):
+    pass
 
 

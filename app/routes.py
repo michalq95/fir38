@@ -100,8 +100,7 @@ def viewOrder(id):
     order = Order.query.filter_by(id=id).first_or_404()
     form = UpdateOrderForm(obj = order)
     
-    
-    if request.method=="POST":
+    if form.validate_on_submit():
         form.populate_obj(order)
         db.session.add(order)
         db.session.commit()
