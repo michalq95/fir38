@@ -39,7 +39,7 @@ class Client(db.Model):
     nip = db.Column(db.String(10))
     balance = db.Column(db.Numeric(10,2))
     startDate = db.Column(db.Date)
-    ordered = relationship("Order", back_populates = 'client')
+    ordered = relationship("Order", back_populates = 'client', lazy='dynamic')
     phoneNumber = db.Column(db.String(12))
     email = db.Column(db.String(120), index=True, unique=True)
 
@@ -82,6 +82,7 @@ class Order(db.Model):
     client_id = db.Column(db.Integer, db.ForeignKey("client.id"))
     client = relationship("Client", back_populates="ordered")
     status = db.Column(Enum(StatusesEnum))
+
 
 
     

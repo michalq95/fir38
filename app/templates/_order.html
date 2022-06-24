@@ -1,0 +1,10 @@
+<tr>
+    <th>{{order.id}}</th>
+    <th><a href="{{ url_for('viewClient', id = order.client.id) }}">{{order.client.name}}</a></th>
+    <th><a href="{{url_for('viewOrder', id = order.id)}}" >{{order.subject}}</a></th>
+    <th>{{order.startDate}}</th>
+    <th>{{order.returnDate}}</th>
+    <th>{{order.status}}</th>
+    <!--<th>Edytuj</a></th>
+    <th>Usun</a></th>-->
+    </tr>

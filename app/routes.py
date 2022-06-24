@@ -3,8 +3,8 @@ from flask import render_template, flash, redirect, url_for, request
 from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 from app import app, db
-from app.forms import CreateClientForm, LoginForm, CreateOrderForm
-from app.models import User, Client, Order 
+from app.forms import CreateClientForm, LoginForm, CreateOrderForm, UpdateOrderForm
+from app.models import User, Client, Order,StatusesEnum
 from datetime import datetime
 
 @app.route('/', methods=['GET', 'POST'])
@@ -80,15 +80,42 @@ def createOrder():
 @app.route("/clients/<id>", methods = ['GET'])
 @login_required
 def viewClient(id):
+    page = request.args.get('page',1,type = int)  
     client = Client.query.filter_by(id=id).first_or_404()
-    return render_template('client.html', client=client )
+    orders = client.ordered.order_by(Order.startDate.desc()).paginate(page,app.config['POSTS_PER_PAGE'],False)
+    if orders.has_next:
+        next_url = url_for('viewClient', id = client.id, page=orders.next_num)
+    else:
+        next_url = None
+    if orders.has_prev:
+        prev_url = url_for('viewClient',id = client.id, page=orders.prev_num)
+    else:
+        prev_url = None
+    return render_template('client.html', client=client, orders=orders.items
+        ,next_url=next_url,prev_url=prev_url )
+
+@app.route("/orders/<id>", methods = ['GET','POST'])
+@login_required
+def viewOrder(id):
+    order = Order.query.filter_by(id=id).first_or_404()
+    form = UpdateOrderForm(obj = order)
+    
+    
+    if request.method=="POST":
+        form.populate_obj(order)
+        db.session.add(order)
+        db.session.commit()
+        return redirect(url_for('orders'))
+
+    form.status.default = order.status.name
+    form.process()
+    return render_template('order.html',order = order, form = form)
 
 @app.route("/orders",methods = ['GET'])
 @login_required
 def orders():
     page = request.args.get('page',1,type = int)  
     orders = Order.query.order_by(Order.id.asc()).paginate(page,app.config['POSTS_PER_PAGE'],False)   
-    #print(orders)
     if orders.has_next:
         next_url = url_for('orders', page=orders.next_num)
     else:
@@ -99,3 +126,4 @@ def orders():
         prev_url = None
     return render_template('orders.html', title='Orders',orders = orders.items,
         next_url=next_url, prev_url=prev_url)
+

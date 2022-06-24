@@ -11,24 +11,15 @@
 
 {% if orders %}
 {% if next_url %}
-<a href="{{ next_url}}"> next page</a>
+<a href="{{ next_url}}"> next</a>
 {% endif %}
 {% if prev_url %}
-<a href="{{ prev_url}}"> prev page</a>
+<a href="{{ prev_url}}"> prev</a>
 {% endif %}
 <table>
 <tr><th>id</th><th>client</th><th>subject</th><th>start</th><th>returnDate</th> <th>status</th><th>Edycja</th><th>Usun</th></tr>
 {% for order in orders %}
-<tr>
-<th>{{order.id}}</th>
-<th> {{order.client.name}}</a></th>
-<th> {{order.subject}}</a></th>
-<th>{{order.startDate}}</th>
-<th>{{order.returnDate}}</th>
-<th>{{order.status}}</th>
-<!--<th>Edytuj</a></th>
-<th>Usun</a></th>-->
-</tr>
+    {% include '_order.html' %}
 {% endfor %}
 </table>
 

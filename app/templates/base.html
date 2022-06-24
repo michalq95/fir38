@@ -10,11 +10,12 @@
     </head>
     <body>
         <div>
-            Microblog:
-            <a href="{{ url_for('index') }}">Home</a>
+            Fir38:
+            
             {% if current_user.is_anonymous %}
             {% else %}
             <a href="{{ url_for('logout') }}">Logout</a>
+            <a href="{{ url_for('index') }}">Clients</a>
             <a href="{{ url_for('createClient') }}">Create Client</a>
             <a href="{{ url_for('orders') }}">Orders</a>
             <a href="{{ url_for('createOrder') }}">Create Order</a>

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+<table>
+    <tr valign="top">
+        <td>
+            <h1>Order: {{ order.subject }}</h1>
+            <p>Client: {{ order.client.name }}</p>
+            <p>price: {{ order.price }}</p>
+            <p>startDate: {% if order.startDate %}{{ order.startDate }}{% endif %}</p>
+            <p>returnDate: {% if order.returnDate %}{{ order.returnDate }}</p>{% endif %}</p>
+            
+            <form action="" method="POST">
+                <p>
+                    {{ form.description.label }}<br>
+                    {{ form.description }}<br>
+                    {% for error in form.description.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+            <p>
+                {{ form.comment.label }}<br>
+                {{ form.comment }}<br>
+                {% for error in form.comment.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>        
+                {{ form.status.label }}<br>
+                {{ form.status }}<br>
+                {% for error in form.status.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+
+            <p>{{ form.submit() }}</p>
+        </form>
+        </td>
+    </tr>
+</table>
+{% endblock %}
