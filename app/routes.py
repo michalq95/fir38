@@ -6,6 +6,7 @@ from app import app, db
 from app.forms import CreateClientForm, LoginForm, CreateOrderForm, UpdateOrderForm
 from app.models import User, Client, Order,StatusesEnum
 from datetime import datetime
+from sqlalchemy_mixins import SmartQueryMixin
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
@@ -63,6 +64,7 @@ def createClient():
 @app.route("/orders/create", methods = ['GET','POST'])
 @login_required
 def createOrder():
+    id = request.args.get('id',"",type = str)
     form = CreateOrderForm()
     if form.validate_on_submit():
         order = Order(
@@ -74,6 +76,9 @@ def createOrder():
         db.session.add(order)
         db.session.commit()
         return redirect(url_for('orders'))
+    if id:
+        form.client.default = Client.query.filter_by(id=id).first_or_404()
+        form.process()
     return render_template('orderscreate.html', title='Create Order', form=form)
 
 
@@ -114,7 +119,15 @@ def viewOrder(id):
 @login_required
 def orders():
     page = request.args.get('page',1,type = int)  
-    orders = Order.query.order_by(Order.id.asc()).paginate(page,app.config['POSTS_PER_PAGE'],False)   
+    filterclient = request.args.get('filterclient',"",type=str)
+    filtersubject = request.args.get('filtersubject',"",type=str)
+    filterstatus = request.args.get('filterstatus',"",type=str)
+    print(filterstatus)
+
+    orders = Order.query.join(Client).filter(Order.subject.contains(filtersubject)) \
+    .filter(Client.name.contains(filterclient)) \
+    .filter(Order.status.contains(filterstatus)) \
+    .order_by(Order.id.asc()).paginate(page,app.config['POSTS_PER_PAGE'],False)   
     if orders.has_next:
         next_url = url_for('orders', page=orders.next_num)
     else:
@@ -124,5 +137,6 @@ def orders():
     else:
         prev_url = None
     return render_template('orders.html', title='Orders',orders = orders.items,
-        next_url=next_url, prev_url=prev_url)
+        next_url=next_url, prev_url=prev_url, filterclient=filterclient,
+        filtersubject=filtersubject)
 

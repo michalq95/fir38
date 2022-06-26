@@ -1,31 +1,65 @@
 {% extends "base.html" %}
-<!--
 
-    {% for client in clients %}
-        <a href="{{ url_for('viewClient', id = client.id) }}">{{client.name}}</a>    
-    {% endfor %}
-
--->
 {% block content %}
 
 
-{% if orders %}
+
+
+<table id="orderTable" class="table">
+
+
+
+<tr>
+    <th onclick="sortTable(0)">id</th>
+    <th onclick="sortTable(1)">client</th>
+    <th onclick="sortTable(2)">subject</th>
+    <th onclick="sortTable(3)">start</th>
+    <th onclick="sortTable(4)">returnDate</th> 
+    <th onclick="sortTable(5)">status</th>
+    <th>Edycja</th>
+    <th>Usun</th></tr>
+<tr><form method="get" action=""><th><input type="submit" value="Filtruj"></th><th>
+    
+        <input type="text" value="{{filterclient}}" name="filterclient"/> <!-- </form>--></th>
+   <th><!-- <form method="get" action="">-->
+        <input type="text" value="{{filtersubject}}" name="filtersubject"/>  
+    </th><th></th><th></th><th>
+        <select name="filterstatus"  >
+            <option value="" selected="selected">Wszystkie</option>
+            <option value="s1" >Przyjete</option>
+            <option value="s2">outsourcowane</option>
+            <option value="s3">komplikacje</option>
+            <option value="s4">wykonane</option>
+            <option value="s5">oddane</option>
+        </select>
+    </form>
+
+
+    </th>
+
+
+    </tr>
+{% if orders %}    
+
+{% for order in orders %}
+
+    {% include '_order.html' %}
+
+{% endfor %}
+
+</table>
+<br>
+{% else %}
+<p>No orders are available.</p>
+{% endif %}
 {% if next_url %}
 <a href="{{ next_url}}"> next</a>
 {% endif %}
 {% if prev_url %}
 <a href="{{ prev_url}}"> prev</a>
 {% endif %}
-<table>
-<tr><th>id</th><th>client</th><th>subject</th><th>start</th><th>returnDate</th> <th>status</th><th>Edycja</th><th>Usun</th></tr>
-{% for order in orders %}
-    {% include '_order.html' %}
-{% endfor %}
-</table>
-
-{% else %}
-<p>No orders are available.</p>
-{% endif %}
 
 
+
+<script src=" {{ url_for('static', filename='index.js') }}"></script>
 {% endblock %}

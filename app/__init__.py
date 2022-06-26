@@ -9,6 +9,7 @@ app = Flask(__name__)
 app.config.from_object(Config)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+db.create_all()
 login = LoginManager(app)
 
 
@@ -17,4 +18,4 @@ login = LoginManager(app)
 
 
 
-from app import routes, models
+from app import  models,routes

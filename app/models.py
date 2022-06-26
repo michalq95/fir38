@@ -37,9 +37,9 @@ class Client(db.Model):
     firstName = db.Column(db.String(64))
     lastName = db.Column(db.String(64))
     nip = db.Column(db.String(10))
-    balance = db.Column(db.Numeric(10,2))
+    balance = db.Column(db.Integer)
     startDate = db.Column(db.Date)
-    ordered = relationship("Order", back_populates = 'client', lazy='dynamic')
+    ordered = relationship("Order", backref = 'client', lazy='dynamic')
     phoneNumber = db.Column(db.String(12))
     email = db.Column(db.String(120), index=True, unique=True)
 
@@ -75,14 +75,14 @@ class StatusesEnum(enum.Enum):
 class Order(db.Model):
     __tablename__= 'order'
     id = db.Column(db.Integer, primary_key=True)
-    price = db.Column(db.Numeric(10,2))
+    price = db.Column(db.Integer)
     startDate = db.Column(db.Date)
     returnDate = db.Column(db.Date)
     subject = db.Column(db.String(128), index = True)
     description = db.Column(db.String(256))
     comment = db.Column(db.String(256))
     client_id = db.Column(db.Integer, db.ForeignKey("client.id"))
-    client = relationship("Client", back_populates="ordered")
+    #client = relationship("Client", back_populates="ordered")
     status = db.Column(Enum(StatusesEnum))
     locked = db.Column(db.Boolean, default = False)
 

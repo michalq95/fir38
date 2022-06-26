@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_wtf import FlaskForm
-from wtforms import SelectField, TextAreaField, StringField, PasswordField, BooleanField, SubmitField, DecimalField
+from wtforms import SelectField,IntegerField, TextAreaField, StringField, PasswordField, BooleanField, SubmitField, DecimalField
 from wtforms.validators import Length, ValidationError, DataRequired, Email, EqualTo
 from app.models import User, Client, StatusesEnum, Order#,coerce_for_enum
 import email_validator
@@ -35,11 +35,10 @@ class CreateClientForm(FlaskForm):
 
 class CreateOrderForm(FlaskForm):
     subject = StringField("subject", validators=[DataRequired()])
-    price = DecimalField("price", validators=[DataRequired()])
+    price = IntegerField("price", validators=[DataRequired()])
     description = StringField("Description")
     comment = TextAreaField("Comment", validators=[Length(max=256)])
-    status = SelectField("Status", choices= [(e.name, e.value) for e in StatusesEnum]
-        )
+    status = SelectField("Status", choices= [(e.name, e.value) for e in StatusesEnum])
     client = SelectField("Client", choices = Client.query.all())
     submit = SubmitField('CreateClient')
 
