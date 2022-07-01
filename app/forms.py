@@ -5,6 +5,7 @@ from wtforms.validators import Length, ValidationError, DataRequired, Email, Equ
 from app.models import User, Client, StatusesEnum, Order#,coerce_for_enum
 import email_validator
 from markupsafe import escape
+from wtforms_sqlalchemy.fields import QuerySelectField
 
 
 class LoginForm(FlaskForm):
@@ -32,14 +33,14 @@ class CreateClientForm(FlaskForm):
             raise ValidationError('Please use a different email address.')
 
 
-
 class CreateOrderForm(FlaskForm):
     subject = StringField("subject", validators=[DataRequired()])
     price = IntegerField("price", validators=[DataRequired()])
     description = StringField("Description")
     comment = TextAreaField("Comment", validators=[Length(max=256)])
     status = SelectField("Status", choices= [(e.name, e.value) for e in StatusesEnum])
-    client = SelectField("Client", choices = Client.query.all())
+    client = QuerySelectField("Client" ,query_factory=lambda: Client.query.all(),
+        validators=[DataRequired()])
     submit = SubmitField('CreateClient')
 
 class UpdateOrderForm(FlaskForm):

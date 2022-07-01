@@ -16,7 +16,6 @@
     <th onclick="sortTable(3)">start</th>
     <th onclick="sortTable(4)">returnDate</th> 
     <th onclick="sortTable(5)">status</th>
-    <th>Edycja</th>
     <th>Usun</th></tr>
 <tr><form method="get" action=""><th><input type="submit" value="Filtruj"></th><th>
     
@@ -24,9 +23,9 @@
    <th><!-- <form method="get" action="">-->
         <input type="text" value="{{filtersubject}}" name="filtersubject"/>  
     </th><th></th><th></th><th>
-        <select name="filterstatus"  >
+        <select name="filterstatus" >
             <option value="" selected="selected">Wszystkie</option>
-            <option value="s1" >Przyjete</option>
+            <option value="s1">Przyjete</option>
             <option value="s2">outsourcowane</option>
             <option value="s3">komplikacje</option>
             <option value="s4">wykonane</option>

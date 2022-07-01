@@ -6,13 +6,13 @@ from app import app, db
 from app.forms import CreateClientForm, LoginForm, CreateOrderForm, UpdateOrderForm
 from app.models import User, Client, Order,StatusesEnum
 from datetime import datetime
-from sqlalchemy_mixins import SmartQueryMixin
+from sqlalchemy import or_
+#from sqlalchemy_mixins import SmartQueryMixin
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
 def index():
     if current_user.is_authenticated:
-        print(current_user.username)
         return redirect(url_for('clients'))
     form = LoginForm()
     if form.validate_on_submit():
@@ -107,11 +107,13 @@ def viewOrder(id):
     
     if form.validate_on_submit():
         form.populate_obj(order)
-        db.session.add(order)
+        db.session.merge(order)
         db.session.commit()
         return redirect(url_for('orders'))
 
     form.status.default = order.status.name
+    form.description.default = order.description
+    form.comment.default = order.comment
     form.process()
     return render_template('order.html',order = order, form = form)
 
@@ -122,9 +124,8 @@ def orders():
     filterclient = request.args.get('filterclient',"",type=str)
     filtersubject = request.args.get('filtersubject',"",type=str)
     filterstatus = request.args.get('filterstatus',"",type=str)
-    print(filterstatus)
-
-    orders = Order.query.join(Client).filter(Order.subject.contains(filtersubject)) \
+    orders = Order.query.join(Client) \
+    .filter(Order.subject.contains(filtersubject)) \
     .filter(Client.name.contains(filterclient)) \
     .filter(Order.status.contains(filterstatus)) \
     .order_by(Order.id.asc()).paginate(page,app.config['POSTS_PER_PAGE'],False)   

@@ -10,6 +10,32 @@ import enum
 from sqlalchemy import Enum
 
 
+    
+class PaginatedAPIMixin(object):
+    @staticmethod
+    def colAPI(query, page, per_page, endpoint, **kwargs):
+        resources = query.paginate(page, per_page, False)
+        data = {
+            'items': [item.to_dict() for item in resources.items],
+            '_meta': {
+                'page': page,
+                'per_page': per_page,
+                'total_pages': resources.pages,
+                'total_items': resources.total
+            },
+            '_links': {
+                'self': url_for(endpoint, page=page, per_page=per_page,
+                                **kwargs),
+                'next': url_for(endpoint, page=page + 1, per_page=per_page,
+                                **kwargs) if resources.has_next else None,
+                'prev': url_for(endpoint, page=page - 1, per_page=per_page,
+                                **kwargs) if resources.has_prev else None
+            }
+        }
+        return data
+
+
+
 class User(UserMixin,db.Model):
     __tablename__= 'user'
     id = db.Column(db.Integer, primary_key=True)
@@ -30,7 +56,7 @@ class User(UserMixin,db.Model):
 def load_user(id):
     return User.query.get(int(id))
 
-class Client(db.Model):
+class Client(PaginatedAPIMixin,db.Model):
     __tablename__= 'client'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64),index=True)
@@ -46,6 +72,24 @@ class Client(db.Model):
     def __str__(self):
         return self.name  # value string
 
+    def getOrdered(self):
+        return self.ordered.all()
+
+
+    def to_dict(self):
+        data = {
+            'id':self.id,
+            'name':self.name,
+            'firstName':self.firstName,
+            'lastName':self.lastName,
+            'nip':self.nip,
+            'balance':self.balance,
+            'start':self.startDate,
+            'phoneNumber':self.phoneNumber,
+            'email':self.email
+        }
+        return data
+
     
 
 class StatusesEnum(enum.Enum):
@@ -54,25 +98,14 @@ class StatusesEnum(enum.Enum):
     s3 = 'Komplikacje'
     s4 = 'Wykonane'
     s5 = 'Oddane'
+    s0 = ''
 
     def __str__(self):
         return str(self.value)  # value string
 
-    #def __html__(self):
-    #    return self.value  # label string
+class Order(PaginatedAPIMixin,db.Model):
 
-#def coerce_for_enum(enum):
-#    def coerce(name):
-#        if isinstance(name, enum):
-#            return name
-#        try:
-#            return enum[name]
-#        except KeyError:
-#            raise ValueError(name)
-#    return coerce
-    
 
-class Order(db.Model):
     __tablename__= 'order'
     id = db.Column(db.Integer, primary_key=True)
     price = db.Column(db.Integer)
@@ -86,8 +119,40 @@ class Order(db.Model):
     status = db.Column(Enum(StatusesEnum))
     locked = db.Column(db.Boolean, default = False)
 
+    def __str__(self):
+        return self.subject  # value string
 
-
-    
-
-
+    def to_dict(self):
+        data = {
+            'id':self.id,
+            'price':self.price,
+            'startDate':self.startDate,
+            'returnDate':self.returnDate,
+            'subject':self.subject,
+            'description':self.description,
+            'comment':self.comment,
+            'client_id':self.client_id,
+            'status':{
+                'name':self.status.name,
+                'value':self.status.value
+            }
+        }
+        return data
+        
+    def colAPI(query,page,per_page,endpoint, **kwargs):
+            resources = query.paginate(page,per_page,False)
+            data = {
+                '_meta': {
+                'page': page,
+                'per_page': per_page,
+                'total_pages': resources.pages,
+                'total_items': resources.total
+            },
+            'orders' : [res.to_dict() for res in resources.items],
+            '_links':{
+                'self': url_for(endpoint,page=page, per_page=per_page, **kwargs),
+                'next': url_for(endpoint,page=page + 1, per_page=per_page, **kwargs) if resources.has_next else None,
+                'prev': url_for(endpoint,page=page - 1, per_page=per_page, **kwargs) if resources.has_prev else None                
+            }
+            }
+            return data
